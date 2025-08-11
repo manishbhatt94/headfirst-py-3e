@@ -2,7 +2,7 @@ from statistics import mean
 
 import hfpy_utils
 
-FOLDER = "../swimdata/"
+FOLDER = "swimdata/"
 CHARTS = "charts/"
 
 
