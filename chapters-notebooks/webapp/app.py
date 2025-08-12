@@ -1,7 +1,7 @@
 import os
 
 import swimclub
-from flask import Flask, render_template, session
+from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
 app.secret_key = "You will never guess..."
@@ -40,10 +40,26 @@ def display_swimmers():
     )
 
 
-@app.get("/files/<swimmer>")
-def get_swimmers_files(swimmer):
+@app.post("/showfiles")
+def display_swimmers_files():
     populate_data()
-    return str(session["swimmers"][swimmer])
+    name = request.form["swimmer"]
+    return render_template(
+        "select.html",
+        title="Select an event",
+        url="/showbarchart",
+        select_id="file",
+        data=session["swimmers"][name],
+    )
+
+
+@app.post("/showbarchart")
+def show_bar_chart():
+    file_id = request.form["file"]
+    print("file_id =", file_id)
+    location = swimclub.produce_bar_chart(file_id, "templates/")
+    print("location =", location)
+    return render_template(location.split("/")[-1])
 
 
 if __name__ == "__main__":
