@@ -24,7 +24,7 @@ def populate_data():
 def index():
     return render_template(
         "index.html",
-        title="Welcome to the Swimclub system",
+        title="Welcome to the Swimclub",
     )
 
 
