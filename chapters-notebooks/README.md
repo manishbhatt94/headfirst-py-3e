@@ -7,4 +7,6 @@
 - 04 - Formatted String Literals
 - 05 - Data Structure Choices
 - 06 - Web Development
+- 07 - Deployment
+- 08 - Working with HTML
 
