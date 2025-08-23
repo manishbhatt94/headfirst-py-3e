@@ -57,7 +57,6 @@ def read_swim_data(filename):
 
     mins_secs, hundredths = f"{(average / 100):.2f}".split(".")
     mins_secs = int(mins_secs)
-    hundredths = int(hundredths)
     minutes = mins_secs // 60
     seconds = mins_secs % 60
 
@@ -107,7 +106,7 @@ def produce_bar_chart(fn, location=CHARTS):
         <p>Average time: {average}</p>
 
         <p>
-            M: {record_times[0]} ({record_times[2]})<br .>
+            M: {record_times[0]} ({record_times[2]})<br />
             W: {record_times[1]} ({record_times[3]})
         </p>
     </body>

@@ -37,7 +37,6 @@ def read_swim_data(filename):
 
     mins_secs, hundredths = f"{(average / 100):.2f}".split(".")
     mins_secs = int(mins_secs)
-    hundredths = int(hundredths)
     minutes = mins_secs // 60
     seconds = mins_secs % 60
 
