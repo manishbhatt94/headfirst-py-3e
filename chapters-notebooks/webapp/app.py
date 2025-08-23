@@ -4,7 +4,7 @@ import swimclub
 from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
-app.secret_key = "You will never guess..."
+app.secret_key = "463c4898bcf3ed83fd13cf48d360e4cdb577cae2058b7215b8bdabeac4c34194"
 
 
 def populate_data():
