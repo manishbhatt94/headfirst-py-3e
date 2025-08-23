@@ -1,5 +1,5 @@
+import convert_utils
 import data_utils
-import swimclub
 from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
@@ -59,9 +59,22 @@ def display_swimmer_events():
 
 @app.post("/showbarchart")
 def show_bar_chart():
-    file_id = request.form["file"]
-    location = swimclub.produce_bar_chart(file_id, "templates/")
-    return render_template(location.split("/")[-1])
+    distance, stroke = request.form["event"].split(" ")
+    data = data_utils.get_swimmers_times(
+        session["swimmer"], session["age"], distance, stroke, session["chosen_date"]
+    )
+    times = [time[0] for time in data]
+    average_str, times_reversed, scaled = convert_utils.perform_conversions(times)
+    world_records = convert_utils.get_worlds(distance, stroke)
+    header = f"{session['swimmer']} (Under {session['age']}) {distance} {stroke} - {session['chosen_date']}"
+
+    return render_template(
+        "chart.html",
+        title=header,
+        data=list(zip(times_reversed, scaled)),
+        average=average_str,
+        worlds=world_records,
+    )
 
 
 if __name__ == "__main__":
