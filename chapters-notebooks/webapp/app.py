@@ -1,23 +1,9 @@
-import os
-
+import data_utils
 import swimclub
 from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
 app.secret_key = "463c4898bcf3ed83fd13cf48d360e4cdb577cae2058b7215b8bdabeac4c34194"
-
-
-def populate_data():
-    if "swimmers" not in session:
-        swim_files = os.listdir(swimclub.FOLDER)
-        if ".DS_Store" in swim_files:
-            swim_files.remove(".DS_Store")
-        session["swimmers"] = {}
-        for file in swim_files:
-            name, *_ = swimclub.read_swim_data(file)
-            if name not in session["swimmers"]:
-                session["swimmers"][name] = []
-            session["swimmers"][name].append(file)
 
 
 @app.get("/")
@@ -28,28 +14,46 @@ def index():
     )
 
 
-@app.get("/swimmers")
-def display_swimmers():
-    populate_data()
+@app.get("/swims")
+def display_swim_sessions():
+    data = data_utils.get_swim_sessions()
+    dates = [session[0].split(" ")[0] for session in data]
     return render_template(
         "select.html",
-        title="Select a swimmer",
-        url="/showfiles",
-        select_id="swimmer",
-        data=sorted(session["swimmers"]),
+        title="Select a swim session",
+        url="/swimmers",
+        select_id="chosen_date",
+        data=dates,
     )
 
 
-@app.post("/showfiles")
-def display_swimmers_files():
-    populate_data()
-    name = request.form["swimmer"]
+@app.post("/swimmers")
+def display_swimmers():
+    session["chosen_date"] = request.form["chosen_date"]
+    data = data_utils.get_session_swimmers(session["chosen_date"])
+    swimmers = [f"{name}-{age}" for name, age in data]
+    return render_template(
+        "select.html",
+        title="Select a swimmer",
+        url="/showevents",
+        select_id="swimmer",
+        data=sorted(swimmers),
+    )
+
+
+@app.post("/showevents")
+def display_swimmer_events():
+    session["swimmer"], session["age"] = request.form["swimmer"].split("-")
+    data = data_utils.get_swimmers_events(
+        session["swimmer"], session["age"], session["chosen_date"]
+    )
+    events = [f"{distance} {stroke}" for distance, stroke in data]
     return render_template(
         "select.html",
         title="Select an event",
         url="/showbarchart",
-        select_id="file",
-        data=session["swimmers"][name],
+        select_id="event",
+        data=events,
     )
 
 
