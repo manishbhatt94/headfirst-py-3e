@@ -42,6 +42,16 @@ we're running DB server within docker, so our MySQL client running on docker\
 host WSL2 Ubuntu OS doesn't have that file - so we specify we need to connect\
 using the network port, & not a Unix sock file.
 
+We can also specify the database we wish to be selected when we connect\
+instead of having to manually do `USE swimDB;` to select every time:\
+`mysql -h 127.0.0.1 -u root -p swimDB`
+
+To confirm which database is currently selected we can say:\
+`SELECT DATABASE();`
+
+And this should output "NULL" if we didn't specify database name when\
+connecting, or "swimDB" if we did.
+
 
 ## Create DB and user (one time)
 - Connect to the DB server
