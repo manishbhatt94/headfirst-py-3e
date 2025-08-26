@@ -17,7 +17,11 @@ def index():
 @app.get("/swims")
 def display_swim_sessions():
     data = data_utils.get_swim_sessions()
-    dates = [session[0].split(" ")[0] for session in data]
+    ## dates = [session[0].split(" ")[0] for session in data]   # SQLite3.
+    dates = [str(session[0].date()) for session in data]  # MariaDB.
+    # MariaDB's python driver returns Python `datetime` objects. So we convert
+    # those to strings.
+    # Whereas, SQLite3's python driver returned plain date time strings.
     return render_template(
         "select.html",
         title="Select a swim session",

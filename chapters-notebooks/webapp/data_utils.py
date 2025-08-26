@@ -7,7 +7,10 @@ import queries
 # MariaDB specific DBcm database config variable - dict containing information
 # about the DB connection and credentials
 db_details = {
-    "host": "localhost",
+    # "localhost" as host doesn't work when DB is running within docker.
+    # Instead "127.0.0.1" works fine!
+    ## "host": "localhost",
+    "host": "127.0.0.1",
     "database": "swimDB",
     "user": "swimuser",
     "password": "swimpasswd",
