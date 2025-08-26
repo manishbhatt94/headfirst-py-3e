@@ -1,7 +1,17 @@
 import DBcm
 import queries
 
-db_details = "CoachDB.sqlite3"
+# SQLite specific DBcm database config variable (just a str with DB filename)
+## db_details = "CoachDB.sqlite3"
+
+# MariaDB specific DBcm database config variable - dict containing information
+# about the DB connection and credentials
+db_details = {
+    "host": "localhost",
+    "database": "swimDB",
+    "user": "swimuser",
+    "password": "swimpasswd",
+}
 
 
 def get_swim_sessions():
