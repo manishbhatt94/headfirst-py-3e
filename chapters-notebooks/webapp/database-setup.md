@@ -101,19 +101,44 @@ a CREATE SEQUENCE statement (which we will delete - as it's not valid to be\
 used in MariaDB).
 
 
-## Import the dumped table structure script file into MariaDB (one time)
-- Change working directory to where the "schema.sql" file is located using "cd"
+## Take dump of data stored within tables in SQLite (one time)
+- Navigate to the "chapter-notebooks/webapp" directory - where the\
+  "CoachDB.sqlite3" database file is present
+- Run below command, to take dump of all INSERT statements in a new file called\
+  "data.sql" in the current directory:\
+  `sqlite3 CoachDB.sqlite3 '.dump swimmers events times --data-only' > data.sql`
+- Here `.dump` is a type of dot command provided by sqlite3 CLI
+- Within the newly created "data.sql" file, there are numerous INSERT\
+  statements
+
+
+## Import dumped data (table structure & records) into MariaDB (one time)
+- Change working directory to where the "schema.sql" file is located,\
+  using "cd". This should be in "chapter-notebooks/webapp" directory
 - Connect to MariaDB using mysql-client as "swimuser" user account and in the\
   "swimDB" database:\
   `mysql -h 127.0.0.1 -u swimuser -p swimDB`
 - You get the "mysql>" prompt on successfully connecting
-- On this prompt enter below SQL command to execute the statements in\
+
+### Import the dumped table structure script file containing DDL statements
+- On the "mysql>" prompt, enter below SQL command to execute the statements in\
   "schema.sql" file:\
   `source schema.sql`
 - You should see 3 (three) messages in the command output saying: "Query OK" -\
   since the "schema.sql" file had 3 (three) CREATE TABLE statements.
 - Confirm if the tables have been created by running:\
   `SHOW TABLES;`
+
+### Import the dumped table records script file containing DML statements
+- On the "mysql>" prompt, enter below SQL command to execute the statements in\
+  "data.sql" file:\
+  `source data.sql`
+- You will see numerous "Query OK" message in above command's output
+- Run below queries to confirm, if the records have been populated in the\
+  three tables:\
+  `select count(*) from swimmers;`  # This gives 23 as output\
+  `select count(*) from events;`  # This gives 14 as output\
+  `select count(*) from times;`  # This gives 467 as output
 
 
 ## Running MariaDB container every time:
