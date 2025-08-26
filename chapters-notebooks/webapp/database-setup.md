@@ -26,14 +26,15 @@
 
 
 ## Install `mysql-client` on Ubuntu (one time)
-To connect to the running MariaDB server, we can use `mysql-client` which we
+To connect to the running MariaDB server, we can use `mysql-client` which we\
 will install as follows:
 - `sudo apt install mysql-client`
 
 ## Connecting to the MariaDB server
-Above command installs "mysql-client" package on Ubuntu. Which makes available\
-a CLI tool called "mysql" on system path - which we can use to connect to our\
-MariaDB server as follows:\
+### Connecting as MariaDB's 'root' user account
+Above command ("apt install") installs "mysql-client" package on Ubuntu. Which\
+makes , a CLI tool called "mysql" on system path - which we can use to\
+connect to our MariaDB server as follows:\
 `mysql -h 127.0.0.1 -u root -p`
 
 Note: We had to specify "-h" or hostname option, since normally connection to a\
@@ -42,6 +43,7 @@ we're running DB server within docker, so our MySQL client running on docker\
 host WSL2 Ubuntu OS doesn't have that file - so we specify we need to connect\
 using the network port, & not a Unix sock file.
 
+### Connecting with database mentioned
 We can also specify the database we wish to be selected when we connect\
 instead of having to manually do `USE swimDB;` to select every time:\
 `mysql -h 127.0.0.1 -u root -p swimDB`
@@ -60,9 +62,28 @@ connecting, or "swimDB" if we did.
 - Confirm if "swimDB" database has been created:\
   `SHOW DATABASES;`
 - Create a new user called "swimuser" (setting "swimpasswd" as password):\
-  `GRANT ALL ON swimDB.* TO 'swimuser'@'localhost' IDENTIFIED BY 'swimpasswd';`
+  `CREATE USER 'swimuser'@'%' IDENTIFIED BY 'swimpasswd';`
+- Grant all privileges to this user on the "swimDB" database:\
+  `GRANT ALL ON swimDB.* TO 'swimuser'@'%';`
+- Reload the grant tables, making the permissions related changes take effect\
+  immediately:\
+  `FLUSH PRIVILEGES;`
 - Confirm if "swimuser" user has been created:\
   `SELECT User, Host FROM mysql.user;`
+
+
+## Connecting to the MariaDB server as the new 'swimuser' user account:
+Use below command (note: we specify the user account name & also the name of\
+the database to connect to)\
+
+`mysql -h 127.0.0.1 -u swimuser -p swimDB`
+
+Enter the password for this user account - which, as we just created the user\
+account, is "swimpasswd".
+
+Now we are connected as this "swimuser" user account - which we can confirm by\
+running below query:\
+`SELECT USER();`
 
 
 ## Take dump of table create scripts SQL code from SQLite (one time)
@@ -74,6 +95,25 @@ connecting, or "swimDB" if we did.
   and run below:\
   `sqlite3 CoachDB.sqlite3 .schema > schema.sql`\
 - Here `.schema` is a type of [dot command](https://sqlite.org/cli.html#special_commands_to_sqlite3_dot_commands_) provided by sqlite3 CLI
+- This creates a new file named "schema.sql" in the current directory. This\
+contains CREATE TABLE statements for all the tables defined in SQLite, and also\
+a CREATE SEQUENCE statement (which we will delete - as it's not valid to be\
+used in MariaDB).
+
+
+## Import the dumped table structure script file into MariaDB (one time)
+- Change working directory to where the "schema.sql" file is located using "cd"
+- Connect to MariaDB using mysql-client as "swimuser" user account and in the\
+  "swimDB" database:\
+  `mysql -h 127.0.0.1 -u swimuser -p swimDB`
+- You get the "mysql>" prompt on successfully connecting
+- On this prompt enter below SQL command to execute the statements in\
+  "schema.sql" file:\
+  `source schema.sql`
+- You should see 3 (three) messages in the command output saying: "Query OK" -\
+  since the "schema.sql" file had 3 (three) CREATE TABLE statements.
+- Confirm if the tables have been created by running:\
+  `SHOW TABLES;`
 
 
 ## Running MariaDB container every time:
