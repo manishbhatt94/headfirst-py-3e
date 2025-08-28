@@ -1,3 +1,5 @@
+import platform
+
 import DBcm
 import queries
 
@@ -6,15 +8,26 @@ import queries
 
 # MariaDB specific DBcm database config variable - dict containing information
 # about the DB connection and credentials
-db_details = {
-    # "localhost" as host doesn't work when DB is running within docker.
-    # Instead "127.0.0.1" works fine!
-    ## "host": "localhost",
-    "host": "127.0.0.1",
-    "database": "swimDB",
-    "user": "swimuser",
-    "password": "swimpasswd",
-}
+
+if "aws" in platform.uname().release:
+    # Running on PythonAnywhere.
+    db_details = {
+        "host": "mangoeseverywhere.mysql.pythonanywhere-services.com",
+        "database": "mangoeseverywher$default",
+        "user": "mangoeseverywher",
+        "password": "swimpasswd",
+    }
+else:
+    # Running locally.
+    db_details = {
+        # "localhost" as host doesn't work when DB is running within docker.
+        # Instead "127.0.0.1" works fine!
+        ## "host": "localhost",
+        "host": "127.0.0.1",
+        "database": "swimDB",
+        "user": "swimuser",
+        "password": "swimpasswd",
+    }
 
 
 def get_swim_sessions():
