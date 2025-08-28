@@ -25,10 +25,18 @@
   `docker stop mariadb-server`
 
 
+## Running MariaDB container every time:
+- When work is done with the DB server, stop the container using:\
+  `docker stop mariadb-server`
+- To start the same container again:
+  `docker start mariadb-server`
+
+
 ## Install `mysql-client` on Ubuntu (one time)
 To connect to the running MariaDB server, we can use `mysql-client` which we\
 will install as follows:
 - `sudo apt install mysql-client`
+
 
 ## Connecting to the MariaDB server
 ### Connecting as MariaDB's 'root' user account
@@ -41,7 +49,9 @@ Note: We had to specify "-h" or hostname option, since normally connection to a\
 locally running MySQL/MariaDB server uses a Unix .sock socket file - but since\
 we're running DB server within docker, so our MySQL client running on docker\
 host WSL2 Ubuntu OS doesn't have that file - so we specify we need to connect\
-using the network port, & not a Unix sock file.
+using the network port, & not a Unix sock file, and we do that by providing the\
+`-h <hostname>` flag where we use 127.0.0.1 (Note that using "localhost" might\
+not work, especially when connecting to DB from application code).
 
 ### Connecting with database mentioned
 We can also specify the database we wish to be selected when we connect\
@@ -141,8 +151,17 @@ used in MariaDB).
   `select count(*) from times;`  # This gives 467 as output
 
 
-## Running MariaDB container every time:
-- When work is done with the DB server, stop the container using:\
-  `docker stop mariadb-server`
-- To start the same container again:
-  `docker start mariadb-server`
+## Export data from MariaDB (using "mysqldump" CLI tool)
+The "mysqldump" CLI tool comes with "mysql-client" package. Use below command\
+to create a dump of SQL statements needed to recreate the table structures as\
+well as the data population (i.e. all the CREATE TABLE and INSERT statements):\
+
+`mysqldump --column-statistics=0 -h 127.0.0.1 -u root -p swimDB > db.sql`
+
+Here we provide connection flags to mysqldump to properly connect to our DB\
+server.
+
+We need to use "root" user since it is better to use admin user for taking\
+backups & similar administrative tasks.
+
+We export the dump in a new file "db.sql" in current working directory.
