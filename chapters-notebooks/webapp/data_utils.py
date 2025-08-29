@@ -1,7 +1,7 @@
 import platform
 
-import DBcm
-import queries
+from dbcm_data_utils import DataUtilsDbCm
+from pymysql_data_utils import DataUtilsPyMySQL
 
 # SQLite specific DBcm database config variable (just a str with DB filename)
 ## db_details = "CoachDB.sqlite3"
@@ -17,6 +17,7 @@ if "aws" in platform.uname().release:
         "user": "mangoeseverywher",
         "password": "swimpasswd",
     }
+    data_utils_obj = DataUtilsPyMySQL(db_details)
 else:
     # Running locally.
     db_details = {
@@ -28,56 +29,29 @@ else:
         "user": "swimuser",
         "password": "swimpasswd",
     }
+    data_utils_obj = DataUtilsDbCm(db_details)
 
 
 def get_swim_sessions():
     """Return a tuple-list of unique session timestamps."""
-    with DBcm.UseDatabase(db_details) as db:
-        db.execute(queries.SQL_SESSIONS)
-        results = db.fetchall()
-    return results
+    return data_utils_obj.get_swim_sessions()
 
 
 def get_session_swimmers(date):
     """When given a date (YYYY-MM-DD), return a tuple-list of swimmers
     and their associated age (filtered by date).
     """
-    with DBcm.UseDatabase(db_details) as db:
-        db.execute(queries.SQL_SWIMMERS_BY_SESSION, (date,))
-        results = db.fetchall()
-    return results
+    return data_utils_obj.get_session_swimmers(date)
 
 
 def get_swimmers_events(name, age, date):
     """When given a date (YYYY-DD-MM), swimmer's name, and swimmer's age, return
     a tuple-list of events the swimmer swam on that date."""
-    with DBcm.UseDatabase(db_details) as db:
-        db.execute(
-            queries.SQL_SWIMMERS_EVENTS_BY_SESSION,
-            (
-                name,
-                age,
-                date,
-            ),
-        )
-        results = db.fetchall()
-    return results
+    return data_utils_obj.get_swimmers_events(name, age, date)
 
 
 def get_swimmers_times(name, age, distance, stroke, date):
     """When given a swimmer's name, swimmer's age group, distance, stroke, and
     a swim session date (YYYY-MM-DD), return a tuple-list of times the swimmer
     swam on that date over the identified distance/stroke combination."""
-    with DBcm.UseDatabase(db_details) as db:
-        db.execute(
-            queries.SQL_CHART_DATA_BY_SWIMMER_EVENT_SESSION,
-            (
-                name,
-                age,
-                distance,
-                stroke,
-                date,
-            ),
-        )
-        results = db.fetchall()
-    return results
+    return data_utils_obj.get_swimmers_times(name, age, distance, stroke, date)
