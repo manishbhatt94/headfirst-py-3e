@@ -1,3 +1,5 @@
+-- Dump of SQLite data
+
 CREATE TABLE swimmers (
         id integer not null primary key auto_increment,
         name varchar(32) not null,

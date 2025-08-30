@@ -1,3 +1,5 @@
+-- Dump of SQLite data
+
 /* WARNING: Script requires that SQLITE_DBCONFIG_DEFENSIVE be disabled */
 INSERT INTO swimmers VALUES(25,'Katie',9);
 INSERT INTO swimmers VALUES(26,'Calvin',9);
