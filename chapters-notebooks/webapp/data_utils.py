@@ -1,8 +1,5 @@
 import platform
 
-from dbcm_data_utils import DataUtilsDbCm
-from pymysql_data_utils import DataUtilsPyMySQL
-
 # SQLite specific DBcm database config variable (just a str with DB filename)
 ## db_details = "CoachDB.sqlite3"
 
@@ -17,6 +14,8 @@ if "aws" in platform.uname().release:
         "user": "mangoeseverywher",
         "password": "swimpasswd",
     }
+    from pymysql_data_utils import DataUtilsPyMySQL
+
     data_utils_obj = DataUtilsPyMySQL(db_details)
 else:
     # Running locally.
@@ -29,6 +28,8 @@ else:
         "user": "swimuser",
         "password": "swimpasswd",
     }
+    from dbcm_data_utils import DataUtilsDbCm
+
     data_utils_obj = DataUtilsDbCm(db_details)
 
 
