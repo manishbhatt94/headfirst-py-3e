@@ -20,7 +20,10 @@ def get_worlds(distance, stroke):
     records at that distance and stroke."""
     with open(JSONDATA) as jf:
         records = json.load(jf)
-    return [records[course][f"{distance} {CONVERSIONS[stroke]}"] for course in COURSES]
+    return [
+        records[course].get(f"{distance} {CONVERSIONS[stroke]}", "NA")
+        for course in COURSES
+    ]
 
 
 def perform_conversions(times):
